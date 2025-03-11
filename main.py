@@ -48,8 +48,10 @@ import os
 import sqlite3
 import streamlit as st
 
-# Force Python to use the updated SQLite version
+
+# Tell Python to use the updated SQLite library
 os.environ["LD_LIBRARY_PATH"] = "/home/appuser/.local/lib"
+os.environ["PATH"] = "/home/appuser/.local/bin:" + os.environ["PATH"]
 
 # Verify the SQLite version in Streamlit Cloud
 st.write(f"SQLite Version: {sqlite3.sqlite_version}")
