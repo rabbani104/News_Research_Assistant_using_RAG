@@ -1,4 +1,4 @@
-import os
+import duckdb
 from uuid import uuid4
 from dotenv import load_dotenv
 from pathlib import Path
@@ -11,11 +11,6 @@ from langchain.storage import InMemoryStore
 from langchain.vectorstores import DuckDB
 
 load_dotenv()
-
-
-# api_key = os.getenv("GROQ_API_KEY")
-# if not api_key:
-#     raise ValueError("GROQ API key is missing!")
 
 # Constants
 CHUNK_SIZE = 1000
@@ -38,11 +33,15 @@ def initialize_components(api_key):
             model_kwargs={"trust_remote_code": True}
         )
         
-        storage = InMemoryStore()
-        vector_store = DuckDB(
-            embedding_function=ef,
-            storage_context=storage,
+        conn = duckdb.connect(database=':memory:',
+                config={
+                    "enable_external_access": "false",
+                    "autoinstall_known_extensions": "false",
+                    "autoload_known_extensions": "false"
+                }
         )
+
+        vector_store = DuckDB(conn, ef)
 
 def process_urls(urls, api_key):
     yield "Initializing Components"
