@@ -8,7 +8,7 @@ from langchain.text_splitter import RecursiveCharacterTextSplitter
 from langchain_groq import ChatGroq
 from langchain_huggingface import HuggingFaceEmbeddings
 from langchain.storage import InMemoryStore
-from langchain.vectorstores import DuckDB
+from langchain_community.vectorstores.duckdb import DuckDB
 
 load_dotenv()
 
@@ -42,6 +42,7 @@ def initialize_components(api_key):
         )
 
         vector_store = DuckDB(conn, ef)
+        
 
 def process_urls(urls, api_key):
     yield "Initializing Components"
