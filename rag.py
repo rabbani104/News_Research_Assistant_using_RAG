@@ -8,7 +8,7 @@ from langchain.text_splitter import RecursiveCharacterTextSplitter
 from langchain_groq import ChatGroq
 from langchain_huggingface import HuggingFaceEmbeddings
 from langchain.storage import InMemoryStore
-from langchain_community.vectorstores.duckdb import DuckDB
+from langchain_community.vectorstores import DuckDB
 
 load_dotenv()
 
@@ -21,32 +21,28 @@ COLLECTION_NAME = "news_research"
 llm = None
 vector_store = None
 
-def initialize_components(api_key):
+# def initialize_components(api_key):
+#     global llm, vector_store
+
+#     if llm is None:
+#         llm = ChatGroq(model="llama-3.3-70b-versatile", api_key=api_key, temperature=0.9, max_tokens=500)
+
+#     if vector_store is None:
+#         ef = HuggingFaceEmbeddings(
+#             model_name=EMBEDDING_MODEL,
+#             model_kwargs={"trust_remote_code": True}
+#         )
+        
+#         vector_store = DuckDB.from_documents(documents, ef)
+
+
+def process_urls(urls, api_key):
+    yield "Initializing Components"
     global llm, vector_store
 
     if llm is None:
         llm = ChatGroq(model="llama-3.3-70b-versatile", api_key=api_key, temperature=0.9, max_tokens=500)
 
-    if vector_store is None:
-        ef = HuggingFaceEmbeddings(
-            model_name=EMBEDDING_MODEL,
-            model_kwargs={"trust_remote_code": True}
-        )
-        
-        conn = duckdb.connect(database=':memory:',
-                config={
-                    "enable_external_access": "false",
-                    "autoinstall_known_extensions": "false",
-                    "autoload_known_extensions": "false"
-                }
-        )
-
-        vector_store = DuckDB(conn, ef)
-        
-
-def process_urls(urls, api_key):
-    yield "Initializing Components"
-    initialize_components(api_key)
 
     yield "Resetting vector store...✅"
     vector_store.clear()
@@ -62,6 +58,14 @@ def process_urls(urls, api_key):
     )
 
     docs = text_splitter.split_documents(data)
+
+    if vector_store is None:
+        ef = HuggingFaceEmbeddings(
+            model_name=EMBEDDING_MODEL,
+            model_kwargs={"trust_remote_code": True}
+        )
+        
+        vector_store = DuckDB.from_documents(docs, ef)
 
     yield "Add chunks to vector database...✅"
     uuids = [str(uuid4()) for _ in range(len(docs))]
