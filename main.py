@@ -1,17 +1,5 @@
-import os
-import sqlite3
 import streamlit as st
 from rag import process_urls, generate_answer
-
-# Download and build SQLite 3.49+ inside Streamlit Cloud
-os.system("wget https://www.sqlite.org/2025/sqlite-autoconf-3490100.tar.gz")
-os.system("tar xvfz sqlite-autoconf-3490100.tar.gz")
-os.system("cd sqlite-autoconf-3490100 && ./configure --prefix=/home/appuser/.local && make && make install")
-
-# Force Python to use the compiled SQLite version
-os.environ["LD_LIBRARY_PATH"] = "/home/appuser/.local/lib"
-os.environ["PATH"] = "/home/appuser/.local/bin:" + os.environ["PATH"]
-
 
 st.title("News Research Tool")
 
