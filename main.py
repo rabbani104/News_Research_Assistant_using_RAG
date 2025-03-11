@@ -33,13 +33,24 @@
 #     except RuntimeError as e:
 #         placeholder.text("You must process urls first")
 
-import streamlit as st
+# import streamlit as st
+# import sqlite3
+
+# # Fetch SQLite version
+# sqlite_version = sqlite3.sqlite_version
+# sqlite_file = sqlite3.__file__
+
+# # Display the output in Streamlit
+# st.write(f"SQLite Version: {sqlite_version}")
+# st.write(f"SQLite Library Path: {sqlite_file}")
+
+import os
 import sqlite3
+import streamlit as st
 
-# Fetch SQLite version
-sqlite_version = sqlite3.sqlite_version
-sqlite_file = sqlite3.__file__
+# Force Python to use the updated SQLite version
+os.environ["LD_LIBRARY_PATH"] = "/home/appuser/.local/lib"
 
-# Display the output in Streamlit
-st.write(f"SQLite Version: {sqlite_version}")
-st.write(f"SQLite Library Path: {sqlite_file}")
+# Verify the SQLite version in Streamlit Cloud
+st.write(f"SQLite Version: {sqlite3.sqlite_version}")
+st.write(f"SQLite Library Path: {sqlite3.__file__}")
