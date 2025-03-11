@@ -40,7 +40,6 @@ def initialize_components(api_key):
         
         storage = InMemoryStore()
         vector_store = DuckDB(
-            collection_name=COLLECTION_NAME,
             embedding_function=ef,
             storage_context=storage,
         )
