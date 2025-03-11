@@ -62,9 +62,9 @@ import sqlite3
 import streamlit as st
 
 # Download and build SQLite 3.49+ inside Streamlit Cloud
-os.system("wget https://www.sqlite.org/2023/sqlite-autoconf-3490000.tar.gz")
-os.system("tar xvfz sqlite-autoconf-3490000.tar.gz")
-os.system("cd sqlite-autoconf-3490000 && ./configure --prefix=/home/appuser/.local && make && make install")
+os.system("wget https://www.sqlite.org/2025/sqlite-autoconf-3490100.tar.gz")
+os.system("tar xvfz sqlite-autoconf-3490100.tar.gz")
+os.system("cd sqlite-autoconf-3490100 && ./configure --prefix=/home/appuser/.local && make && make install")
 
 # Force Python to use the compiled SQLite version
 os.environ["LD_LIBRARY_PATH"] = "/home/appuser/.local/lib"
