@@ -11,6 +11,10 @@ from langchain.vectorstores import DuckDB
 
 load_dotenv()
 
+api_key = os.getenv("GROQ_API_KEY")
+if not api_key:
+    raise ValueError("GROQ API key is missing!")
+    
 # Constants
 CHUNK_SIZE = 1000
 EMBEDDING_MODEL = "Alibaba-NLP/gte-base-en-v1.5"
@@ -24,7 +28,7 @@ def initialize_components():
     global llm, vector_store
 
     if llm is None:
-        llm = ChatGroq(model="llama-3.3-70b-versatile", temperature=0.9, max_tokens=500)
+        llm = ChatGroq(model="llama-3.3-70b-versatile", api_key=api_key, temperature=0.9, max_tokens=500)
 
     if vector_store is None:
         ef = HuggingFaceEmbeddings(
