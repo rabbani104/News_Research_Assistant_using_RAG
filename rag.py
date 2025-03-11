@@ -22,7 +22,7 @@ llm = None
 vector_store = None
 
 
-def clear_duckdb_vectorstore(db_path=VECTORSTORE_DIR):
+def clear_duckdb_vectorstore(db_path="resources/vectorstore/vector_store.duckdb"):
     """Clears all documents from the DuckDB vector store."""
     conn = duckdb.connect(db_path)
 
@@ -64,7 +64,7 @@ def process_urls(urls, api_key):
     initialize_components(urls, api_key)
 
     yield "Resetting vector store...✅"
-    clear_duckdb_vectorstore(VECTORSTORE_DIR)
+    clear_duckdb_vectorstore()
 
     yield "Loading data...✅"
     loader = UnstructuredURLLoader(urls)
