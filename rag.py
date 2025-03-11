@@ -1,3 +1,4 @@
+import os
 from uuid import uuid4
 from dotenv import load_dotenv
 from pathlib import Path
@@ -14,7 +15,7 @@ load_dotenv()
 api_key = os.getenv("GROQ_API_KEY")
 if not api_key:
     raise ValueError("GROQ API key is missing!")
-    
+
 # Constants
 CHUNK_SIZE = 1000
 EMBEDDING_MODEL = "Alibaba-NLP/gte-base-en-v1.5"
