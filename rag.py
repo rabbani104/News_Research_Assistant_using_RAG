@@ -12,9 +12,10 @@ from langchain.vectorstores import DuckDB
 
 load_dotenv()
 
-api_key = os.getenv("GROQ_API_KEY")
-if not api_key:
-    raise ValueError("GROQ API key is missing!")
+
+# api_key = os.getenv("GROQ_API_KEY")
+# if not api_key:
+#     raise ValueError("GROQ API key is missing!")
 
 # Constants
 CHUNK_SIZE = 1000
@@ -25,7 +26,7 @@ COLLECTION_NAME = "news_research"
 llm = None
 vector_store = None
 
-def initialize_components():
+def initialize_components(api_key):
     global llm, vector_store
 
     if llm is None:
@@ -44,9 +45,9 @@ def initialize_components():
             storage_context=storage,
         )
 
-def process_urls(urls):
+def process_urls(urls, api_key):
     yield "Initializing Components"
-    initialize_components()
+    initialize_components(api_key)
 
     yield "Resetting vector store...✅"
     vector_store.clear()
