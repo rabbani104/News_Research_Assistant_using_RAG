@@ -1,7 +1,9 @@
+# @Author: Dhaval Patel Copyrights Codebasics Inc. and LearnerX Pvt Ltd.
+
 import streamlit as st
 from rag import process_urls, generate_answer
 
-st.title("News Research Tool")
+st.title("Real Estate Research Tool")
 
 url1 = st.sidebar.text_input("URL 1")
 url2 = st.sidebar.text_input("URL 2")
@@ -9,17 +11,14 @@ url3 = st.sidebar.text_input("URL 3")
 
 placeholder = st.empty()
 
-api_key = st.secrets["GROQ_API_KEY"]
-
 process_url_button = st.sidebar.button("Process URLs")
 if process_url_button:
     urls = [url for url in (url1, url2, url3) if url!='']
     if len(urls) == 0:
         placeholder.text("You must provide at least one valid url")
     else:
-        for status in process_urls(urls, api_key):
+        for status in process_urls(urls):
             placeholder.text(status)
-
 
 query = placeholder.text_input("Question")
 if query:
@@ -34,4 +33,3 @@ if query:
                 st.write(source)
     except RuntimeError as e:
         placeholder.text("You must process urls first")
-

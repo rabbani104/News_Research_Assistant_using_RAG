@@ -1,81 +1,67 @@
-import duckdb
+# @Author: Dhaval Patel Copyrights Codebasics Inc. and LearnerX Pvt Ltd.
+
 from uuid import uuid4
 from dotenv import load_dotenv
 from pathlib import Path
 from langchain.chains import RetrievalQAWithSourcesChain
 from langchain_community.document_loaders import UnstructuredURLLoader
 from langchain.text_splitter import RecursiveCharacterTextSplitter
+from langchain_chroma import Chroma
 from langchain_groq import ChatGroq
-from langchain_huggingface import HuggingFaceEmbeddings
-from langchain.storage import InMemoryStore
-from langchain_community.vectorstores import DuckDB
+from langchain_huggingface.embeddings import HuggingFaceEmbeddings
 
 load_dotenv()
 
 # Constants
 CHUNK_SIZE = 1000
-EMBEDDING_MODEL = "Alibaba-NLP/gte-base-en-v1.5"
+EMBEDDING_MODEL = "sentence-transformers/all-MiniLM-L6-v2"
 VECTORSTORE_DIR = Path(__file__).parent / "resources/vectorstore"
-COLLECTION_NAME = "news_research"
+COLLECTION_NAME = "real_estate"
 
 llm = None
 vector_store = None
 
 
-def clear_duckdb_vectorstore(db_path="resources/vectorstore/vector_store.duckdb"):
-    """Clears all documents from the DuckDB vector store."""
-    conn = duckdb.connect(db_path)
-
-    # Delete all records from the table
-    conn.execute("DELETE FROM langchain_docs;")
-
-    # (Optional) Vacuum to free up space
-    conn.execute("VACUUM;")
-
-    conn.close()
-
-def initialize_components(urls, api_key):
+def initialize_components():
     global llm, vector_store
 
     if llm is None:
-        llm = ChatGroq(model="llama-3.3-70b-versatile", api_key=api_key, temperature=0.9, max_tokens=500)
+        llm = ChatGroq(model="llama-3.3-70b-versatile", temperature=0.9, max_tokens=500)
 
     if vector_store is None:
         ef = HuggingFaceEmbeddings(
             model_name=EMBEDDING_MODEL,
             model_kwargs={"trust_remote_code": True}
         )
-        
-        loader = UnstructuredURLLoader(urls)
-        data = loader.load()
 
-   
-        text_splitter = RecursiveCharacterTextSplitter(
-            separators=['\n\n', '\n', '.', ' '],
-            chunk_size=CHUNK_SIZE,
+        vector_store = Chroma(
+            collection_name=COLLECTION_NAME,
+            embedding_function=ef,
+            persist_directory=str(VECTORSTORE_DIR)
         )
 
-        docs = text_splitter.split_documents(data)
-        vector_store = DuckDB.from_documents(docs, ef)
 
-
-def process_urls(urls, api_key):
+def process_urls(urls):
+    """
+    This function scraps data from a url and stores it in a vector db
+    :param urls: input urls
+    :return:
+    """
     yield "Initializing Components"
-    initialize_components(urls, api_key)
+    initialize_components()
 
     yield "Resetting vector store...✅"
-    clear_duckdb_vectorstore()
+    vector_store.reset_collection()
 
     yield "Loading data...✅"
-    loader = UnstructuredURLLoader(urls)
+    loader = UnstructuredURLLoader(urls=urls)
     data = loader.load()
 
     yield "Splitting text into chunks...✅"
     text_splitter = RecursiveCharacterTextSplitter(
-        separators=['\n\n', '\n', '.', ' '],
-        chunk_size=CHUNK_SIZE,
+        separators=["\n\n", "\n", ".", " "],
+        chunk_size=CHUNK_SIZE
     )
-
     docs = text_splitter.split_documents(data)
 
     yield "Add chunks to vector database...✅"
@@ -86,12 +72,14 @@ def process_urls(urls, api_key):
 
 def generate_answer(query):
     if not vector_store:
-        raise RuntimeError("Vector DB not initialized")
+        raise RuntimeError("Vector database is not initialized ")
+
     chain = RetrievalQAWithSourcesChain.from_llm(llm=llm, retriever=vector_store.as_retriever())
     result = chain.invoke({"question": query}, return_only_outputs=True)
     sources = result.get("sources", "")
 
     return result['answer'], sources
+
 
 if __name__ == "__main__":
     urls = [
@@ -100,7 +88,6 @@ if __name__ == "__main__":
     ]
 
     process_urls(urls)
-
-    answer, sources = generate_answer("Tell me what was the 30 year fixed mortgage rate along with the date?")
+    answer, sources = generate_answer("Tell me what was the 30 year fixed mortagate rate along with the date?")
     print(f"Answer: {answer}")
     print(f"Sources: {sources}")
