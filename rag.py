@@ -21,6 +21,19 @@ COLLECTION_NAME = "news_research"
 llm = None
 vector_store = None
 
+
+def clear_duckdb_vectorstore(db_path=VECTORSTORE_DIR):
+    """Clears all documents from the DuckDB vector store."""
+    conn = duckdb.connect(db_path)
+
+    # Delete all records from the table
+    conn.execute("DELETE FROM langchain_docs;")
+
+    # (Optional) Vacuum to free up space
+    conn.execute("VACUUM;")
+
+    conn.close()
+
 def initialize_components(urls, api_key):
     global llm, vector_store
 
@@ -51,7 +64,7 @@ def process_urls(urls, api_key):
     initialize_components(urls, api_key)
 
     yield "Resetting vector store...✅"
-    vector_store.clear()
+    clear_duckdb_vectorstore(VECTORSTORE_DIR)
 
     yield "Loading data...✅"
     loader = UnstructuredURLLoader(urls)
