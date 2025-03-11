@@ -21,7 +21,7 @@ COLLECTION_NAME = "news_research"
 llm = None
 vector_store = None
 
-def initialize_components(api_key):
+def initialize_components(urls, api_key):
     global llm, vector_store
 
     if llm is None:
@@ -48,7 +48,7 @@ def initialize_components(api_key):
 
 def process_urls(urls, api_key):
     yield "Initializing Components"
-    initialize_components(api_key)
+    initialize_components(urls, api_key)
 
     yield "Resetting vector store...✅"
     vector_store.clear()
