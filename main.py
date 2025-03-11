@@ -44,15 +44,32 @@
 # st.write(f"SQLite Version: {sqlite_version}")
 # st.write(f"SQLite Library Path: {sqlite_file}")
 
+# import os
+# import sqlite3
+# import streamlit as st
+
+
+# # Tell Python to use the updated SQLite library
+# os.environ["LD_LIBRARY_PATH"] = "/home/appuser/.local/lib"
+# os.environ["PATH"] = "/home/appuser/.local/bin:" + os.environ["PATH"]
+
+# # Verify the SQLite version in Streamlit Cloud
+# st.write(f"SQLite Version: {sqlite3.sqlite_version}")
+# st.write(f"SQLite Library Path: {sqlite3.__file__}")
+
 import os
 import sqlite3
 import streamlit as st
 
+# Download and build SQLite 3.49+ inside Streamlit Cloud
+os.system("wget https://www.sqlite.org/2023/sqlite-autoconf-3490000.tar.gz")
+os.system("tar xvfz sqlite-autoconf-3490000.tar.gz")
+os.system("cd sqlite-autoconf-3490000 && ./configure --prefix=/home/appuser/.local && make && make install")
 
-# Tell Python to use the updated SQLite library
+# Force Python to use the compiled SQLite version
 os.environ["LD_LIBRARY_PATH"] = "/home/appuser/.local/lib"
 os.environ["PATH"] = "/home/appuser/.local/bin:" + os.environ["PATH"]
 
-# Verify the SQLite version in Streamlit Cloud
+# Check SQLite version in Streamlit Cloud
 st.write(f"SQLite Version: {sqlite3.sqlite_version}")
 st.write(f"SQLite Library Path: {sqlite3.__file__}")
