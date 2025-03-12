@@ -24,7 +24,7 @@ def initialize_components(api_key):
     global llm, vector_store
 
     if llm is None:
-        llm = ChatGroq(model="llama-3.3-70b-versatile", api_key=api_key,temperature=0.9, max_tokens=500)
+        llm = ChatGroq(model="llama-3.3-70b-versatile",temperature=0.9, max_tokens=500, api_key=api_key)
 
     if vector_store is None:
         ef = HuggingFaceEmbeddings(
