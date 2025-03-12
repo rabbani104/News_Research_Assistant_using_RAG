@@ -1,5 +1,3 @@
-# @Author: Dhaval Patel Copyrights Codebasics Inc. and LearnerX Pvt Ltd.
-
 from uuid import uuid4
 from dotenv import load_dotenv
 from pathlib import Path
@@ -16,7 +14,7 @@ load_dotenv()
 CHUNK_SIZE = 1000
 EMBEDDING_MODEL = "sentence-transformers/all-MiniLM-L6-v2"
 VECTORSTORE_DIR = Path(__file__).parent / "resources/vectorstore"
-COLLECTION_NAME = "real_estate"
+COLLECTION_NAME = "news_assistant"
 
 llm = None
 vector_store = None
