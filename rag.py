@@ -20,11 +20,11 @@ llm = None
 vector_store = None
 
 
-def initialize_components():
+def initialize_components(api_key):
     global llm, vector_store
 
     if llm is None:
-        llm = ChatGroq(model="llama-3.3-70b-versatile", temperature=0.9, max_tokens=500)
+        llm = ChatGroq(model="llama-3.3-70b-versatile", api_key=api_key,temperature=0.9, max_tokens=500)
 
     if vector_store is None:
         ef = HuggingFaceEmbeddings(
@@ -39,14 +39,14 @@ def initialize_components():
         )
 
 
-def process_urls(urls):
+def process_urls(api_key,urls):
     """
     This function scraps data from a url and stores it in a vector db
     :param urls: input urls
     :return:
     """
     yield "Initializing Components"
-    initialize_components()
+    initialize_components(api_key)
 
     yield "Resetting vector store...✅"
     vector_store.reset_collection()
