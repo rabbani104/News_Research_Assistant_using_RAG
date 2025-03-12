@@ -39,7 +39,7 @@ def initialize_components(api_key):
         )
 
 
-def process_urls(api_key,urls):
+def process_urls(urls, api_key):
     """
     This function scraps data from a url and stores it in a vector db
     :param urls: input urls
